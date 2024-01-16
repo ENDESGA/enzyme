@@ -9,7 +9,8 @@ the system uses hierarchical structures to allow for clean translations and para
 ### `amino_acid`
 a basic translation unit analogous to a biological amino acid, serving as the building block for the transpiler:
 ```c
-typedef struct amino_acid {
+typedef struct amino_acid
+{
 	text from; // the source pattern
 	text to;   // the target pattern
 } amino_acid;
@@ -18,7 +19,8 @@ typedef struct amino_acid {
 ### `peptide`
 captures the positional information of parameters much like peptides form active segments of proteins:
 ```c
-typedef struct peptide {
+typedef struct peptide
+{
 	text param;      // the parameter name
 	long* indices;   // positions in enzyme's cofactor.to
 	long size;       // number of occurrences
@@ -28,7 +30,8 @@ typedef struct peptide {
 ### `polypeptide`
 aggregates multiple `peptide` structures, each representing a parameter within a translation unit:
 ```c
-typedef struct polypeptide {
+typedef struct polypeptide
+{
 	peptide* chain; // array of peptides for each parameter
 	long size;      // total number of parameters
 } polypeptide;
@@ -37,18 +40,27 @@ typedef struct polypeptide {
 ### `enzyme`
 functions like a biological enzyme, catalyzing a translation operation with an associated pattern and parameters:
 ```c
-typedef struct enzyme {
+typedef struct enzyme
+{
 	amino_acid cofactor;  // translation pattern
 	polypeptide peptides; // parameters, if functional
 } enzyme;
 ```
 
 ### `enzymatic_pathway`
-a collection of `enzyme` structures that work together to complete the transpiling process across an entire body of text:
+a collection of `enzyme` structures that work together to complete the transpiling process across an entire body of text.
+the catalysis map is an ASCII look-up-table which groups enzymes which start with the same letter, to allow for accelerated search:
 ```c
+typedef struct catalysis
+{
+	long* indices; // positions in list for enzymes
+	long size;     // amount of similar enzymes
+} catalysis;
+
 typedef struct enzymatic_struct {
-	enzyme* list; // array of enzymes for translations
-	long size;    // number of enzymes
+	enzyme* list;         // array of enzymes for translations
+	long size;            // number of enzymes
+	catalysis map[ 256 ]; // ASCII-LUT
 } enzymatic_struct;
 typedef enzymatic_struct* enzymatic_pathway;
 ```
