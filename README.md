@@ -2,6 +2,7 @@
 
 ## overview
 ***enzyme*** is a tool designed for code translation and lexical analysis, utilising a structure inspired by proteins in biology.
+
 the system uses hierarchical structures to allow for clean translations and parameter management processes.
 
 ## structures
@@ -49,6 +50,7 @@ typedef struct enzyme
 
 ### `enzymatic_pathway`
 a collection of `enzyme` structures that work together to complete the transpiling process across an entire body of text.
+
 the catalysis map is an ASCII look-up-table which groups enzymes which start with the same letter, to allow for accelerated search:
 ```c
 typedef struct catalysis
