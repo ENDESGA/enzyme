@@ -7,49 +7,49 @@ the system uses hierarchical structures to allow for clean translations and para
 
 ## structures
 
-### `amino_acid`
-a basic translation unit analogous to a biological amino acid, serving as the building block for the transpiler:
+### `cofactor`
+main translation unit analogous to a biological cofactor, serving as the "active site" for the transpiler:
 ```c
-typedef struct amino_acid
+typedef struct cofactor
 {
 	text from; // the source pattern
 	text to;   // the target pattern
+} cofactor;
+```
+
+### `amino_acid`
+captures the positional information of parameters much like amino-acids in a chain:
+```c
+typedef struct amino_acid
+{
+	text param;    // the parameter name
+	long* indices; // positions in enzyme's cofactor.to
+	long size;     // number of occurrences
 } amino_acid;
 ```
 
-### `peptide`
-captures the positional information of parameters much like peptides form active segments of proteins:
-```c
-typedef struct peptide
-{
-	text param;      // the parameter name
-	long* indices;   // positions in enzyme's cofactor.to
-	long size;       // number of occurrences
-} peptide;
-```
-
 ### `polypeptide`
-aggregates multiple `peptide` structures, each representing a parameter within a translation unit:
+aggregates multiple `amino_acid` structures, serving as the collection of parameters:
 ```c
 typedef struct polypeptide
 {
-	peptide* chain; // array of peptides for each parameter
-	long size;      // total number of parameters
+	amino_acid* chain; // array of peptides for each parameter
+	long size;         // total number of parameters
 } polypeptide;
 ```
 
-### `enzyme`
-functions like a biological enzyme, catalyzing a translation operation with an associated pattern and parameters:
+### `protein`
+functions like a biological protein, an important structure for the transformation of information:
 ```c
-typedef struct enzyme
+typedef struct protein
 {
-	amino_acid cofactor;  // translation pattern
-	polypeptide peptides; // parameters, if functional
-} enzyme;
+	cofactor macro;     // translation pattern
+	polypeptide params; // parameters, if functional
+} protein;
 ```
 
-### `enzymatic_pathway`
-a collection of `enzyme` structures that work together to complete the transpiling process across an entire body of text.
+### `enzyme`
+a collection of `protein` structures that work together to complete the transpiling process across an entire body of text.
 
 the catalysis map is an ASCII look-up-table which groups enzymes which start with the same letter, to allow for accelerated search:
 ```c
@@ -59,16 +59,17 @@ typedef struct catalysis
 	long size;     // amount of similar enzymes
 } catalysis;
 
-typedef struct enzymatic_struct {
-	enzyme* list;         // array of enzymes for translations
+typedef struct enzyme_struct
+{
+	protein* list;        // array of enzymes for translations
 	long size;            // number of enzymes
 	catalysis map[ 256 ]; // ASCII-LUT
-} enzymatic_struct;
-typedef enzymatic_struct* enzymatic_pathway;
+} enzyme_struct;
+typedef enzyme_struct* enzyme;
 ```
 ##
 
-the `amino_acid` and `peptide` types rely on a `text` type, which is a dynamically expanding string of chars:
+the `cofactor` and `amino_acid` types rely on a `text` type, which is a dynamically expanding string of chars:
 ```c
 typedef struct text_struct
 {
